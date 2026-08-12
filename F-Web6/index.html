@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferdows Archives | فردوس آرکایوز</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --red: #d00000;
+            --white: #ffffff;
+            --black: #000000;
+            --gray: #777;
+            --line: #ddd;
+            --pastel-pink: #ffdede;
+            --transition-speed: 0.5s;
+        }
+        body {
+            background: var(--white);
+            color: var(--black);
+            font-family: "Vazirmatn", "IRANSans", Tahoma, Arial, sans-serif;
+            direction: ltr;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* --- هدر قرمز --- */
+        .site-header {
+            width: 94%;
+            max-width: 1700px;
+            margin: 0 auto;
+            padding: 0 3vw;
+            background: var(--red);
+        }
+        .topbar {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            direction: ltr;
+        }
+
+        /* --- لوگو --- */
+        .brand {
+            width: 165px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .brand img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: left center;
+            display: block;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            direction: ltr;
+            height: 46px;
+        }
+        .icon-button {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .icon-button svg {
+            width: 26px;
+            height: 26px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.7;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .menu-icon {
+            position: relative;
+            width: 30px;
+            height: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .menu-icon span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--white);
+            transition: all 0.3s ease;
+            transform-origin: center;
+            border-radius: 2px;
+        }
+        .menu-icon.is-open span:nth-child(1) {
+            transform: translateY(10px) rotate(45deg);
+        }
+        .menu-icon.is-open span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+        .menu-icon.is-open span:nth-child(3) {
+            transform: translateY(-10px) rotate(-45deg);
+        }
+
+        /* --- نوار مشکی --- */
+        .icon-bar {
+            width: 94%;
+            max-width: 1700px;
+            margin: 0 auto;
+            background: var(--black);
+            padding: 12px 3vw;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            direction: ltr;
+            border-bottom: 1px solid var(--line);
+        }
+        .icon-group {
+            display: flex;
+            align-items: center;
+            width: calc(100% - 220px - 3vw);
+            justify-content: space-between;
+        }
+        .icon-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+        .icon-item:hover {
+            transform: scale(1.08);
+        }
+        .icon-item img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* --- سرچ‌بار --- */
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: var(--white);
+            border-radius: 20px;
+            border: 1px solid var(--line);
+            padding: 4px 14px;
+            width: 220px;
+            height: 34px;
+            flex-shrink: 0;
+            direction: ltr;
+        }
+        .search-box input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--black);
+            font-size: 13px;
+            width: 100%;
+            padding: 0 8px 0 0;
+            font-family: inherit;
+        }
+        .search-box input::placeholder {
+            color: #999;
+            font-weight: 300;
+        }
+        .search-box svg {
+            width: 18px;
+            height: 18px;
+            stroke: #777;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* --- منوی پیش‌فرض --- */
+        .default-menu {
+            position: fixed;
+            z-index: 999;
+            top: 73px;
+            right: 3vw;
+            left: 3vw;
+            background: var(--white);
+            border-top: 1px solid var(--line);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.12);
+            transform: translateY(-18px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .default-menu.is-open {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        .default-menu-inner {
+            padding: 40px 5vw 35px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 40px;
+            direction: rtl;
+        }
+        .default-menu-heading {
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--red);
+        }
+        .default-menu-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px 30px;
+        }
+        .default-menu-links a {
+            font-size: 20px;
+            color: var(--black);
+            border-bottom: 1px solid #eee;
+            padding: 8px 0 12px;
+            transition: color 0.2s ease;
+        }
+        .default-menu-links a:hover {
+            color: var(--red);
+        }
+        .default-menu-footer {
+            grid-column: 1 / -1;
+            direction: ltr;
+            color: #999;
+            font-size: 11px;
+            letter-spacing: 0.18em;
+            padding-top: 20px;
+        }
+
+        /* --- هیرو --- */
+        .hero {
+            width: 94%;
+            max-width: 1700px;
+            margin: 20px auto 0;
+            position: relative;
+            direction: ltr;
+            overflow: visible; 
+        }
+        .hero-image {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+            object-position: center 30%;
+        }
+
+        /* --- دکمه فیلد هنری --- */
+        .field-tab {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--white);
+            color: var(--black);
+            padding: 20px 12px;
+            z-index: 20;
+            min-height: 180px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .field-tab:hover {
+            background: #f5f5f5;
+            transform: translateY(-50%) translateX(2px);
+            box-shadow: 3px 0 14px rgba(0,0,0,0.08);
+        }
+
+        /* ========================================= */
+        /* === مگا منو ============================== */
+        /* ========================================= */
+        .field-menu {
+            position: absolute; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: auto; 
+            background: var(--pastel-pink);
+            z-index: 30;
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateX(-100%); 
+            
+            transition: all var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .field-menu.is-open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .field-menu-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--black);
+            z-index: 40;
+            transition: transform 0.2s ease, color 0.2s ease;
+            line-height: 1;
+            padding: 4px 6px;
+            opacity: 0.6;
+        }
+        .field-menu-close:hover {
+            transform: scale(1.1);
+            opacity: 1;
+            color: var(--red);
+        }
+
+        .field-menu-grid {
+            display: grid;
+            width: 100%;
+            max-width: 900px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0;
+            padding: 50px 0 50px 0; 
+            direction: rtl;
+        }
+
+        .field-menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 15px;
+            padding: 30px 5px;
+            transition: transform 0.2s ease, background 0.2s ease;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.15);
+            text-decoration: none;
+            color: var(--black);
+        }
+        .field-menu-item:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .field-menu-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            display: block;
+            filter: brightness(0);
+        }
+
+        .field-menu-item span {
+            font-weight: 600;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            color: var(--black);
+        }
+
+        /* --- بخش آثار منتخب --- */
+        .showcase-section {
+            width: 94%;
+            max-width: 1700px;
+            margin: 25px auto 0;
+            position: relative;
+            z-index: 1;
+            direction: ltr;
+        }
+        .showcase-header {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 3vw;
+            margin-bottom: 20px;
+            direction: rtl;
+        }
+        .showcase-title {
+            font-size: clamp(16px, 1.6vw, 28px);
+            font-weight: 700;
+            color: var(--black);
+            margin-left: 15px;
+        }
+        .showcase-divider {
+            flex-grow: 0;
+            width: 35%;
+            height: 2px;
+            background: var(--black);
+        }
+        .showcase-grid { display: grid; grid-template-columns: 1fr; }
+        .showcase-card {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .showcase-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+        .showcase-card img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            display: block;
+        }
+
+        @media (min-width: 551px) {
+            .showcase-header { padding: 0 3vw; margin-bottom: 25px; }
+            .showcase-title { font-size: clamp(18px, 2vw, 32px); margin-left: 20px; }
+            .showcase-divider { width: 30%; height: 2px; }
+        }
+
+        /* --- سایر تنظیمات ریسپانسیو --- */
+        @media (max-width: 850px) {
+            .site-header { width: 96%; padding: 0 4vw; }
+            .topbar { height: 54px; }
+            .brand { width: 145px; height: 39px; } 
+            .header-actions { height: 40px; gap: 12px; }
+            .icon-button { width: 26px; height: 26px; }
+            .icon-button svg { width: 22px; height: 22px; }
+            .menu-icon { width: 26px; height: 20px; }
+            .menu-icon span { height: 1.5px; }
+            .icon-bar { width: 96%; padding: 8px 3vw; }
+            .icon-group { width: calc(100% - 180px - 3vw); }
+            .icon-item img { width: 22px; height: 22px; }
+            .search-box { width: 180px; height: 30px; padding: 4px 12px; }
+            .hero { width: 96%; margin: 15px auto 0; }
+            .default-menu { top: 63px; right: 2vw; left: 2vw; }
+            .default-menu-inner { grid-template-columns: 1fr; gap: 25px; padding: 30px 7vw; }
+            .default-menu-links { grid-template-columns: 1fr; }
+            .default-menu-footer { padding-top: 10px; }
+        }
+
+        @media (max-width: 850px) and (min-width: 551px) {
+            .field-menu-grid { 
+                grid-template-columns: repeat(4, 1fr); 
+                max-width: 800px; 
+                padding: 50px 0 50px 0; 
+            }
+            .field-menu-item { padding: 25px 8px; gap: 12px; }
+            .field-menu-item img { width: 65px; height: 65px; }
+            .field-menu-item span { font-size: 16px; }
+            .field-menu-close { top: 15px; right: 25px; font-size: 26px; }
+        }
+
+        /* === تنظیمات موبایل === */
+        @media (max-width: 550px) {
+            .site-header { width: 97%; padding: 0 4vw; }
+            .brand { width: 135px; height: 38px; }
+            .header-actions { height: 34px; gap: 8px; }
+            .icon-bar { width: 97%; padding: 8px 3vw; }
+            .icon-group { width: calc(100% - 140px - 3vw); }
+            .icon-item img { width: 22px; height: 22px; }
+            .search-box { width: 140px; height: 26px; padding: 2px 8px; }
+            .hero { width: 97%; margin: 12px auto 0; }
+            .showcase-section { width: 97%; margin: 15px auto 0; }
+            .showcase-header { padding: 0 3vw; justify-content: flex-end; margin-bottom: 12px; }
+            .showcase-title { font-size: clamp(14px, 3.5vw, 20px); margin-left: 10px; }
+            .showcase-divider { width: 40%; height: 1.5px; }
+            .default-menu { top: 55px; right: 1.5vw; left: 1.5vw; }
+            .default-menu-inner { padding: 25px 5vw 20px; grid-template-columns: 1fr; gap: 15px; }
+            .default-menu-links { grid-template-columns: 1fr; gap: 10px; }
+            .default-menu-links a { font-size: 16px; padding: 6px 0 10px; }
+            .default-menu-footer { padding-top: 8px; }
+            .field-tab { padding: 10px 6px; min-height: 90px; }
+            .field-tab:hover { transform: translateY(-50%) translateX(0.5px); }
+
+            .field-menu-grid {
+                grid-template-columns: repeat(4, 1fr); 
+                max-width: 100%;
+                padding: 40px 0 40px 0;
+            }
+            .field-menu-item { 
+                padding: 15px 2px; 
+                gap: 6px; 
+            }
+            .field-menu-item img { 
+                width: 40px; 
+                height: 40px; 
+            }
+            .field-menu-item span { 
+                font-size: 11px; 
+                letter-spacing: 0px; 
+            }
+            .field-menu-close { 
+                top: 10px; 
+                right: 10px; 
+                font-size: 20px; 
+                padding: 2px 5px; 
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="topbar">
+            <a href="#" class="brand" aria-label="Ferdows Archives">
+                <img src="ferarch.svg" alt="Ferdows Archives">
+            </a>
+            <div class="header-actions">
+                <a href="#" class="icon-button" aria-label="حساب کاربری">
+                    <svg viewBox="0 0 32 32">
+                        <circle cx="16" cy="9" r="6"></circle>
+                        <path d="M5 29c.7-7 4.2-10.5 11-10.5S26.3 22 27 29"></path>
+                    </svg>
+                </a>
+                <a href="#" class="icon-button" aria-label="خانه">
+                    <svg viewBox="0 0 32 32">
+                        <path d="M4 14.5 16 4l12 10.5"></path>
+                        <path d="M7 13v14h7v-8h4v8h7V13"></path>
+                    </svg>
+                </a>
+                
+                <button type="button" class="menu-icon" aria-label="باز کردن منو" aria-expanded="false">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- نوار مشکی با آیکون‌ها -->
+    <div class="icon-bar">
+        <div class="icon-group">
+            <a href="#" class="icon-item">
+                <img src="icon-shop.png" alt="فروشگاه">
+            </a>
+            <a href="#" class="icon-item">
+                <img src="icon-podcast.png" alt="پادکست">
+            </a>
+            <a href="#" class="icon-item">
+                <img src="icon-cv.png" alt="رزومه">
+            </a>
+        </div>
+        <div class="search-box">
+            <input type="text" placeholder="SEARCH...">
+            <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+        </div>
+    </div>
+
+    <section class="hero" id="heroSection">
+        <img class="hero-image" src="ferdows_archives_hero.png" alt="آرشیو سینمایی و هنرهای دیجیتال">
+        
+        <a href="#" class="field-tab" id="fieldTabBtn">
+            <span>فیلد هنری</span>
+        </a>
+
+        <div class="field-menu" id="fieldMenu">
+            <button class="field-menu-close" id="fieldMenuClose">✕</button>
+            
+            <!-- منوی 8 تایی (2 ردیف 4 ستون) -->
+            <div class="field-menu-grid">
+                <!-- ردیف 1 -->
+                <a href="#" class="field-menu-item">
+                    <img src="icon-cinema.png" alt="سینما">
+                    <span>سینما</span>
+                </a>
+                <a href="#" class="field-menu-item">
+                    <img src="icon-music.png" alt="موسیقی">
+                    <span>موسیقی</span>
+                </a>
+                <a href="#" class="field-menu-item">
+                    <img src="icon-painting.png" alt="نقاشی">
+                    <span>نقاشی</span>
+                </a>
+                <a href="#" class="field-menu-item">
+                    <img src="icon-architecture.png" alt="معماری">
+                    <span>معماری</span>
+                </a>
+
+                <!-- ردیف 2 -->
+                <a href="#" class="field-menu-item">
+                    <img src="icon-theater.png" alt="ادبیات نمایشی">
+                    <span>ادبیات نمایشی</span>
+                </a>
+                <a href="#" class="field-menu-item">
+                    <img src="icon-multimedia.png" alt="چند رسانه‌ای">
+                    <span>چند رسانه‌ای</span>
+                </a>
+                <a href="#" class="field-menu-item">
+                    <img src="icon-visual-comm.png" alt="ارتباط تصویری">
+                    <span>ارتباط تصویری</span>
+                </a>
+                <!-- آیتم هشتم (آیکون چاپ) -->
+                <a href="#" class="field-menu-item">
+                    <img src="icon-printing.png" alt="چاپ">
+                    <span>چاپ</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش آثار منتخب -->
+    <section class="showcase-section">
+        <div class="showcase-header">
+            <div class="showcase-divider"></div>
+            <div class="showcase-title">آثار منتخب نمایشی</div>
+        </div>
+        
+        <div class="showcase-grid">
+            <div class="showcase-card">
+                <img src="showcase-1.jpg" alt="دیوار عکس‌های هنری">
+            </div>
+        </div>
+    </section>
+
+    <div class="default-menu" id="defaultMenu" aria-hidden="true">
+        <div class="default-menu-inner">
+            <div class="default-menu-heading">آرشیو فردوس</div>
+            <nav class="default-menu-links">
+                <a href="#">آثار</a>
+                <a href="#">هنرمندان</a>
+                <a href="#">رشته‌ها</a>
+                <a href="#">منتخب آرشیو</a>
+                <a href="#">درباره آرشیو</a>
+                <a href="#">ارسال اثر</a>
+            </nav>
+            <div class="default-menu-footer">ARCHIVE / ART / STUDENTS</div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const toggle = document.querySelector('.menu-icon');
+            const panel = document.getElementById('defaultMenu');
+
+            if (!toggle || !panel) return;
+
+            toggle.addEventListener('click', function() {
+                const isOpen = toggle.classList.toggle('is-open');
+                panel.classList.toggle('is-open', isOpen);
+                toggle.setAttribute('aria-expanded', String(isOpen));
+                toggle.setAttribute('aria-label', isOpen ? 'بستن منو' : 'باز کردن منو');
+                panel.setAttribute('aria-hidden', String(!isOpen));
+            });
+
+            panel.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    toggle.classList.remove('is-open');
+                    panel.classList.remove('is-open');
+                    toggle.setAttribute('aria-expanded', 'false');
+                    toggle.setAttribute('aria-label', 'باز کردن منو');
+                    panel.setAttribute('aria-hidden', 'true');
+                });
+            });
+        })();
+
+        (function() {
+            const tabBtn = document.getElementById('fieldTabBtn');
+            const fieldMenu = document.getElementById('fieldMenu');
+            const closeBtn = document.getElementById('fieldMenuClose');
+
+            if (!tabBtn || !fieldMenu || !closeBtn) return;
+
+            tabBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                fieldMenu.classList.add('is-open');
+            });
+
+            closeBtn.addEventListener('click', function() {
+                fieldMenu.style.transition = 'none'; 
+                fieldMenu.classList.remove('is-open');
+                setTimeout(() => {
+                    fieldMenu.style.transition = 'all var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                }, 50);
+            });
+
+            document.addEventListener('click', function(e) {
+                if (fieldMenu.classList.contains('is-open')) {
+                    if (!fieldMenu.contains(e.target) && e.target !== tabBtn && !tabBtn.contains(e.target)) {
+                        fieldMenu.style.transition = 'none'; 
+                        fieldMenu.classList.remove('is-open');
+                        setTimeout(() => {
+                            fieldMenu.style.transition = 'all var(--transition-speed) cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        }, 50);
+                    }
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>
